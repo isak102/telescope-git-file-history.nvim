@@ -18,6 +18,7 @@ local previewers = require("telescope.previewers")
 local putils = require("telescope.previewers.utils")
 local entry_display = require("telescope.pickers.entry_display")
 local make_entry = require("telescope.make_entry")
+local gfh_actions = require("telescope._extensions.git_file_history.actions")
 
 local function split_string(inputString, separator)
     if separator == nil then
@@ -104,7 +105,8 @@ local function git_file_history(opts)
                     .. " | grep -v '^$' | awk 'ORS=NR%2?\"§§§\":\"\\n\"'",
             }, opts),
             sorter = conf.file_sorter(opts),
-            attach_mappings = function(prompt_bufnr)
+            -- TODO: Make this configurable
+            attach_mappings = function(prompt_bufnr, map)
                 local function open(cmd)
                     local selection = action_state.get_selected_entry()
                     local hash = selection.value
@@ -127,6 +129,13 @@ local function git_file_history(opts)
                 actions.select_vertical:replace(function()
                     open("Gvsplit ")
                 end)
+
+                map(
+                    { "i", "n" },
+                    "<C-g>",
+                    gfh_actions.open_in_browser,
+                    { desc = "Open file at commit in browser" }
+                )
 
                 return true
             end,
@@ -167,5 +176,6 @@ return telescope.register_extension({
     setup = function(optsExt, opts) end, -- TODO: fix
     exports = {
         git_file_history = git_file_history,
+        actions = gfh_actions,
     },
 })
