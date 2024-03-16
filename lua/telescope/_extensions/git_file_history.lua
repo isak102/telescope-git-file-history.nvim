@@ -8,6 +8,18 @@ if not has_plenary then
     error("This plugin requires nvim-lua/plenary.nvim")
 end
 
+if vim.fn.executable("git") == 0 then
+    error("This plugin requires git to be installed")
+end
+
+if vim.fn.executable("awk") == 0 then
+    error("This plugin requires awk to be installed")
+end
+
+if vim.fn.executable("grep") == 0 then
+    error("This plugin requires grep to be installed")
+end
+
 local action_set = require("telescope.actions.set")
 local action_state = require("telescope.actions.state")
 local actions = require("telescope.actions")
