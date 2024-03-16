@@ -1,11 +1,11 @@
 local has_telescope, telescope = pcall(require, "telescope")
 if not has_telescope then
-    error("This plugins requires nvim-telescope/telescope.nvim")
+    error("This plugin requires nvim-telescope/telescope.nvim")
 end
 
 local has_plenary, pfiletype = pcall(require, "plenary.filetype")
 if not has_plenary then
-    error("This plugins requires nvim-lua/plenary.nvim")
+    error("This plugin requires nvim-lua/plenary.nvim")
 end
 
 local action_set = require("telescope.actions.set")
