@@ -37,7 +37,7 @@ gfh_actions.open_in_browser = function()
     elseif vim.fn.executable("wslview") == 1 then
         open_cmd = "wslview"
     else
-        error("No command available to open URL")
+        error("No command available to open URL [xdg-open, open, start or wslview]")
         return
     end
 
