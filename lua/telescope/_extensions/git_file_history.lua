@@ -3,6 +3,11 @@ if not has_telescope then
     error("This plugins requires nvim-telescope/telescope.nvim")
 end
 
+local has_plenary, pfiletype = pcall(require, "plenary.filetype")
+if not has_plenary then
+    error("This plugins requires nvim-lua/plenary.nvim")
+end
+
 local action_set = require("telescope.actions.set")
 local action_state = require("telescope.actions.state")
 local actions = require("telescope.actions")
@@ -11,7 +16,6 @@ local finders = require("telescope.finders")
 local pickers = require("telescope.pickers")
 local previewers = require("telescope.previewers")
 local putils = require("telescope.previewers.utils")
-local pfiletype = require("plenary.filetype")
 local entry_display = require("telescope.pickers.entry_display")
 local make_entry = require("telescope.make_entry")
 
