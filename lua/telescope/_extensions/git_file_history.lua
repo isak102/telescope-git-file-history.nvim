@@ -76,9 +76,18 @@ local function make_commit_entry(opts)
     end
 end
 
+local function is_git_directory()
+    local result = vim.fn.system("git rev-parse --is-inside-work-tree")
+    return result == "true\n"
+end
+
 local function git_file_history(opts)
     opts = opts or {}
     opts.entry_maker = vim.F.if_nil(opts.entry_maker, make_commit_entry(opts))
+
+    if not is_git_directory() then
+        error(vim.fn.getcwd() .. " is not a git directory")
+    end
 
     pickers
         .new(opts, {
