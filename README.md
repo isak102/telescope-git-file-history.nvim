@@ -3,7 +3,7 @@
 Telescope extension which lets you open and preview the current file at any previous commit, without detaching HEAD (i.e., without using `git checkout`). The file can be opened in the current buffer, new split, new tab or in your web browser. The file is opened as a `fugitive-object`, so all [`vim-fugitive`](https://github.com/tpope/vim-fugitive) mappings can be used.
 
 ## Demo
-[Demo](./assets/demo.mp4)
+https://github.com/isak102/telescope-git-file-history.nvim/assets/90389894/9a4b5d2f-4dce-4dcb-816e-3cb8b132f7b9
 
 ## What is the difference between this plugin and `:Telescope git_bcommits`?
 
