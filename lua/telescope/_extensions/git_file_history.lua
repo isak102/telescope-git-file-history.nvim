@@ -19,6 +19,7 @@ local putils = require("telescope.previewers.utils")
 local entry_display = require("telescope.pickers.entry_display")
 local make_entry = require("telescope.make_entry")
 local gfh_actions = require("telescope._extensions.git_file_history.actions")
+local gfh_config = require("telescope._extensions.git_file_history.config")
 
 local function split_string(inputString, separator)
     if separator == nil then
@@ -130,12 +131,11 @@ local function git_file_history(opts)
                     open("Gvsplit ")
                 end)
 
-                map(
-                    { "i", "n" },
-                    "<C-g>",
-                    gfh_actions.open_in_browser,
-                    { desc = "Open file at commit in browser" }
-                )
+                for mode, tbl in pairs(gfh_config.values.mappings) do
+                    for key, action in pairs(tbl) do
+                        map(mode, key, action)
+                    end
+                end
 
                 return true
             end,
@@ -173,7 +173,7 @@ local function git_file_history(opts)
 end
 
 return telescope.register_extension({
-    setup = function(optsExt, opts) end, -- TODO: fix
+    setup = gfh_config.setup,
     exports = {
         git_file_history = git_file_history,
         actions = gfh_actions,
