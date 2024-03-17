@@ -32,15 +32,37 @@ local gfh_config = require("telescope._extensions.git_file_history.config")
 -- separator between commit message and file path. (no path should ever contain this string I hope)
 local SEPARATOR = "§X§Y§Z§"
 
-local function split_string(inputString, separator)
-    if separator == nil then
-        separator = "%s"
+local function parse_entry(entry)
+    local pattern = "(.-) (.-) (.-)" .. SEPARATOR .. "(.+)"
+    local hash, date, msg, path = entry:match(pattern)
+
+    if not hash or not date or not msg or not path then
+        vim.notify(
+            string.format("Failed to parse entry: %s. Skipping this commit", entry),
+            vim.log.levels.ERROR
+        )
+        return nil
     end
-    local t = {}
-    for str in string.gmatch(inputString, "([^" .. separator .. "]+)") do
-        table.insert(t, str)
+
+    if path:find(SEPARATOR) then
+        vim.notify(
+            string.format(
+                "Path (%s) contains separator (%s). Full entry: %s. Skipping this commit. Please open a issue on GitHub: https://github.com/isak102/telescope-git-file-history.nvim/issues",
+                path,
+                SEPARATOR,
+                entry
+            ),
+            vim.log.levels.ERROR
+        )
+        return nil
     end
-    return t
+
+    return {
+        hash = hash,
+        date = date,
+        msg = msg,
+        path = path,
+    }
 end
 
 local function make_commit_entry(opts)
@@ -64,29 +86,17 @@ local function make_commit_entry(opts)
     end
 
     return function(entry)
-        if entry == "" then
+        local parsed_entry = parse_entry(entry)
+        if not parsed_entry then
             return nil
         end
 
-        local parts = split_string(entry, SEPARATOR)
-        local path = parts[2]
-
-        local info = split_string(parts[1], " ")
-
-        local hash = info[1]
-        local date = info[2]
-        local msg = table.concat(info, " ", 3)
-
-        if not msg then
-            msg = "<empty commit message>"
-        end
-
         return make_entry.set_default_entry_mt({
-            value = hash,
-            ordinal = hash .. " " .. date .. " " .. msg,
-            msg = msg,
-            date = date,
-            path = path,
+            value = parsed_entry.hash,
+            ordinal = parsed_entry.hash .. " " .. parsed_entry.date .. " " .. parsed_entry.msg,
+            msg = parsed_entry.msg,
+            date = parsed_entry.date,
+            path = parsed_entry.path,
             display = make_display,
             current_file = opts.current_file,
         }, opts)
