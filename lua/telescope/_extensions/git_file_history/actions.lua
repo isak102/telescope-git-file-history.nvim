@@ -18,8 +18,8 @@ local function get_repo_url()
     return repo_url
 end
 
-local function get_file_at_commit_url(repo_url, sha, path)
-    return repo_url .. "/blob/" .. sha .. "/" .. path
+local function get_file_at_commit_url(repo_url, hash, path)
+    return repo_url .. "/blob/" .. hash .. "/" .. path
 end
 
 gfh_actions.open_in_browser = function()

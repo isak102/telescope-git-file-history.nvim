@@ -29,6 +29,9 @@ local make_entry = require("telescope.make_entry")
 local gfh_actions = require("telescope._extensions.git_file_history.actions")
 local gfh_config = require("telescope._extensions.git_file_history.config")
 
+-- separator between commit message and file path. (no path should ever contain this string I hope)
+local SEPARATOR = "§X§Y§Z§"
+
 local function split_string(inputString, separator)
     if separator == nil then
         separator = "%s"
@@ -54,7 +57,7 @@ local function make_commit_entry(opts)
 
     local make_display = function(entry)
         return displayer({
-            { entry.value, "TelescopeResultsIdentifier" },
+            { string.sub(entry.value, 1, 7), "TelescopeResultsIdentifier" },
             { entry.date, "TelescopeResultsConstant" },
             entry.msg,
         })
@@ -65,12 +68,12 @@ local function make_commit_entry(opts)
             return nil
         end
 
-        local parts = split_string(entry, "§§§")
+        local parts = split_string(entry, SEPARATOR)
         local path = parts[2]
 
         local info = split_string(parts[1], " ")
 
-        local sha = info[1]
+        local hash = info[1]
         local date = info[2]
         local msg = table.concat(info, " ", 3)
 
@@ -79,8 +82,8 @@ local function make_commit_entry(opts)
         end
 
         return make_entry.set_default_entry_mt({
-            value = sha,
-            ordinal = sha .. " " .. date .. " " .. msg,
+            value = hash,
+            ordinal = hash .. " " .. date .. " " .. msg,
             msg = msg,
             date = date,
             path = path,
@@ -109,9 +112,11 @@ local function git_file_history(opts)
             finder = finders.new_oneshot_job({
                 "sh",
                 "-c",
-                "git log --follow --decorate --format='%h %ad%d %s' --date=format:'%Y-%m-%d' --name-only "
+                "git log --follow --decorate --format='%H %ad%d %s' --date=format:'%Y-%m-%d' --name-only "
                     .. vim.fn.expand("%")
-                    .. ' | awk \'{if (!NF) next; if (line) {print line "§§§" $0; line=""} else {line=$0}}\'',
+                    .. " | awk '{if (!NF) next; if (line) {print line \""
+                    .. SEPARATOR
+                    .. '" $0; line=""} else {line=$0}}\'',
             }, opts),
             sorter = conf.file_sorter(opts),
             attach_mappings = function(prompt_bufnr, map)
