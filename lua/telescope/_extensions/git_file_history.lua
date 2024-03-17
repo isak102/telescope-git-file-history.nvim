@@ -16,10 +16,6 @@ if vim.fn.executable("awk") == 0 then
     error("This plugin requires awk to be installed")
 end
 
-if vim.fn.executable("grep") == 0 then
-    error("This plugin requires grep to be installed")
-end
-
 local action_set = require("telescope.actions.set")
 local action_state = require("telescope.actions.state")
 local actions = require("telescope.actions")
@@ -115,7 +111,7 @@ local function git_file_history(opts)
                 "-c",
                 "git log --follow --decorate --format='%h %ad%d %s' --date=format:'%Y-%m-%d' --name-only "
                     .. vim.fn.expand("%")
-                    .. " | grep -v '^$' | awk 'ORS=NR%2?\"§§§\":\"\\n\"'",
+                    .. ' | awk \'{if (!NF) next; if (line) {print line "§§§" $0; line=""} else {line=$0}}\'',
             }, opts),
             sorter = conf.file_sorter(opts),
             -- TODO: Make this configurable
