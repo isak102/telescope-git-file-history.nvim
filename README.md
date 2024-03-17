@@ -26,7 +26,7 @@ Add this plugin as a dependency to `telescope.nvim`, like this:
     "nvim-telescope/telescope.nvim"
     dependencies = {
         {
-            "isak102/telescope-git-file-history.nvim"
+            "isak102/telescope-git-file-history.nvim",
             dependencies = { "tpope/vim-fugitive" }
         }
     }
