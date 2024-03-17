@@ -114,7 +114,6 @@ local function git_file_history(opts)
                     .. ' | awk \'{if (!NF) next; if (line) {print line "§§§" $0; line=""} else {line=$0}}\'',
             }, opts),
             sorter = conf.file_sorter(opts),
-            -- TODO: Make this configurable
             attach_mappings = function(prompt_bufnr, map)
                 local function open(cmd)
                     local selection = action_state.get_selected_entry()
