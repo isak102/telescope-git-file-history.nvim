@@ -3,6 +3,7 @@ local gfh_actions = require("telescope._extensions.git_file_history.actions")
 local config = {}
 
 config.values = {
+    -- Keymaps inside the picker
     mappings = {
         i = {
             ["<C-g>"] = gfh_actions.open_in_browser,
@@ -11,6 +12,10 @@ config.values = {
             ["<C-g>"] = gfh_actions.open_in_browser,
         },
     },
+
+    -- The command to use for opening the browser (nil or string)
+    -- If nil, it will check if xdg-open, open, start, wslview are available, in that order.
+    browser_command = nil,
 }
 
 config.setup = function(opts)
