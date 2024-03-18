@@ -23,7 +23,7 @@ There are a few key differences between this plugin and `:Telescope git_bcommits
 Add this plugin as a dependency to `telescope.nvim`, like this:
 ```lua
 {
-    "nvim-telescope/telescope.nvim"
+    "nvim-telescope/telescope.nvim",
     dependencies = {
         {
             "isak102/telescope-git-file-history.nvim",
