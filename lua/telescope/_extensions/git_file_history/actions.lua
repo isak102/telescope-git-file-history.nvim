@@ -15,6 +15,7 @@ local function get_repo_url()
     end
     repo_url = repo_url:gsub("%.git", "")
     repo_url = repo_url:gsub("[^/]+@dev", "dev")
+    repo_url = repo_url:gsub("\n", "")
 
     return repo_url
 end
