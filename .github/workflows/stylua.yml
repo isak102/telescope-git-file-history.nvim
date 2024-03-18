@@ -1,0 +1,25 @@
+name: Lua Style Check
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  stylua:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Lua
+        uses: leafo/gh-actions-lua@v8
+      - name: Install Stylua
+        run: |
+          LATEST_URL=$(curl -s https://api.github.com/repos/JohnnyMorganz/StyLua/releases/latest | jq -r '.assets[] | select(.name | contains("stylua-linux.zip")) | .browser_download_url')
+          echo "Latest download URL: $LATEST_URL"
+          curl -L $LATEST_URL -o stylua.zip
+          unzip stylua.zip
+          chmod +x stylua
+      - name: Run Stylua
+        run: |
+          ./stylua --check .
