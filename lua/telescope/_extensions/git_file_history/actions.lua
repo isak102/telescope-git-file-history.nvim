@@ -14,12 +14,28 @@ local function get_repo_url()
         repo_url = repo_url:gsub("git@", "https://")
     end
     repo_url = repo_url:gsub("%.git", "")
+    repo_url = repo_url:gsub("[^/]+@dev", "dev")
 
     return repo_url
 end
 
+local function url_encode(str)
+    if str then
+        str = string.gsub(str, "\n", "\r\n")
+        str = string.gsub(str, "([^%w %.])", function(c)
+            return string.format("%%%02X", string.byte(c))
+        end)
+        str = string.gsub(str, " ", "+")
+    end
+    return str
+end
+
 local function get_file_at_commit_url(repo_url, hash, path)
-    return repo_url .. "/blob/" .. hash .. "/" .. path
+    if repo_url:match("dev.azure.com") then
+        return repo_url .. "?path=" .. url_encode(path) .. "&version=GC" .. hash .. "&_a=contents"
+    else
+        return repo_url .. "/blob/" .. hash .. "/" .. path
+    end
 end
 
 gfh_actions.open_in_browser = function()
