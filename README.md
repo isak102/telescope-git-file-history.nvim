@@ -14,8 +14,8 @@ There are a few key differences between this plugin and `:Telescope git_bcommits
 
 ## Dependencies
 - [tpope/vim-fugitive](https://github.com/tpope/vim-fugitive) (for opening file at previous commit without moving HEAD)
-- git
-- awk
+- `git`
+- `awk`
 
 ## Installation
 
@@ -92,6 +92,10 @@ require("telescope").extensions.git_file_history.git_file_history()
 | `select_tab` (Telescope default: `<C-t>`) | Open current file at commit in new tab                                    |
 
 The `select`, `select_vertical`, `select_horizontal` and `select_tab` keymaps are configured by telescope.
+
+## Windows support
+
+This plugin currently does not support Windows [#8](https://github.com/isak102/telescope-git-file-history.nvim/issues/8)
 
 ## Inspiration
 
