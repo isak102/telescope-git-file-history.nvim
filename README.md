@@ -83,7 +83,8 @@ require("telescope").extensions.git_file_history.git_file_history()
 
 ## Keymaps
 
-| Mappings | Action                                                                        |
+This plugin does not define any keymaps for opening the actual picker, but it has some default keymaps inside the picker:
+| Keymaps | Action                                                                        |
 | -------- | ----------------------------------------------------------------------------- |
 | `<C-g>`  | Open current file at commit in web browser                                    |
 | `select` (Telescope default: `<CR>`)  | Open current file at commit in current buffer                                    |
@@ -95,7 +96,7 @@ The `select`, `select_vertical`, `select_horizontal` and `select_tab` keymaps ar
 
 ## Windows support
 
-This plugin currently does not support Windows [#8](https://github.com/isak102/telescope-git-file-history.nvim/issues/8)
+This plugin currently does not support Windows ([#8](https://github.com/isak102/telescope-git-file-history.nvim/issues/8))
 
 ## Inspiration
 
