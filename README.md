@@ -15,7 +15,6 @@ There are a few key differences between this plugin and `:Telescope git_bcommits
 ## Dependencies
 - [tpope/vim-fugitive](https://github.com/tpope/vim-fugitive) (for opening file at previous commit without moving HEAD)
 - `git`
-- `awk`
 
 ## Installation
 
