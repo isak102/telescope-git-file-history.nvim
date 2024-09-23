@@ -34,7 +34,7 @@ local function git_log()
 
     local commits = {}
 
-    local pattern = "([a-fA-F0-9]+)%s+(%d%d%d%d%-%d%d%-%d%d)%s+(.-)%c+M%s+([^\r\n]+)"
+    local pattern = "([a-fA-F0-9]+)%s+(%d%d%d%d%-%d%d%-%d%d)%s+(.-)%c+%S+%s+([^\r\n]+)"
 
     for hash, date, message, path in string.gmatch(content, pattern) do
         table.insert(commits, {
