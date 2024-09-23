@@ -96,10 +96,6 @@ This plugin does not define any keymaps for opening the actual picker, but it ha
 
 The `select`, `select_vertical`, `select_horizontal` and `select_tab` keymaps are configured by telescope.
 
-## Windows support
-
-This plugin currently does not support Windows ([#8](https://github.com/isak102/telescope-git-file-history.nvim/issues/8))
-
 ## Inspiration
 
 - [`Telescope git_bcommits`](https://github.com/nvim-telescope/telescope.nvim/blob/master/lua/telescope/builtin/__git.lua)
