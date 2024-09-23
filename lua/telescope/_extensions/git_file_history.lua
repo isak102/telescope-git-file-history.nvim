@@ -29,14 +29,14 @@ end
 
 local function git_log()
     local file_path = vim.fn.expand("%")
-    local cmd = 'git --no-pager log --follow --decorate --format="%H %ad %s" --date=format:"%Y-%m-%d" --name-only "' .. file_path .. '"'
+    local cmd = 'git --no-pager log --follow --name-status --pretty=format:"%H%x09%ad%x09%s" --date=short "' .. file_path .. '"'
     local content = vim.fn.system(cmd)
 
     local commits = {}
 
-    local pattern = "([a-f0-9]+) (%d%d%d%d%-%d%d%-%d%d) (.-)\n\n([^\r\n]+)"
+    local pattern = "([a-fA-F0-9]+)%s+(%d%d%d%d%-%d%d%-%d%d)%s+(.-)%c+M%s+([^\r\n]+)"
 
-    for hash, date, message, path in content:gmatch(pattern) do
+    for hash, date, message, path in string.gmatch(content, pattern) do
         table.insert(commits, {
             hash = hash,
             date = date,
