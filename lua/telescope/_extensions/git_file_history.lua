@@ -30,9 +30,9 @@ end
 
 local function git_log()
     local file_path = vim.fn.expand("%")
-    local cmd = 'git --no-pager log --follow --name-status --pretty=format:"hash: %H%ndate: %ad%nmessage: %s%n" --date=short "'
-        .. file_path
-        .. '"'
+    local prefix =
+        'git --no-pager log --follow --name-status --pretty=format:"hash: %H%ndate: %ad%nmessage: %s%n" --date=short '
+    local cmd = prefix .. '"' .. file_path .. '"'
     local content = vim.fn.system(cmd)
 
     local commits = {}
@@ -91,7 +91,7 @@ local function git_file_history(opts)
             results_title = "Commits for current file",
             finder = finders.new_table({
                 results = git_log(),
-                 entry_maker = function(entry)
+                entry_maker = function(entry)
                     local displayer = entry_display.create({
                         separator = " ",
                         items = {
@@ -124,7 +124,10 @@ local function git_file_history(opts)
 
                     actions.close(prompt_bufnr)
 
-                    local command = cmd .. hash .. ":" .. path
+                    local command = cmd
+                        .. hash
+                        .. ":"
+                        .. (path:find(" ") and ('"' .. path .. '"') or path)
                     vim.cmd(command)
                 end
 
@@ -155,7 +158,7 @@ local function git_file_history(opts)
                     return entry.value .. ":" .. entry.path
                 end,
                 define_preview = function(self, entry, _)
-                    if self.state.bufname == entry.value .. ":" .. '"' .. entry.path .. '"' then
+                    if self.state.bufname == entry.value .. ":" .. entry.path then
                         return
                     end
 
