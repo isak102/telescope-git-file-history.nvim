@@ -29,7 +29,9 @@ end
 
 local function git_log()
     local file_path = vim.fn.expand("%")
-    local cmd = 'git --no-pager log --follow --name-status --pretty=format:"hash: %H%ndate: %ad%nmessage: %s%n" --date=short "' .. file_path .. '"'
+    local cmd =
+    'git --no-pager log --follow --name-status --pretty=format:"hash: %H%ndate: %ad%nmessage: %s%n" --date=short "' ..
+    file_path .. '"'
     local content = vim.fn.system(cmd)
 
     local commits = {}
@@ -56,7 +58,8 @@ local function git_log()
                 end
                 current_commit.old_name = old_name and old_name:gsub("%s+$", "") or ""
                 current_commit.new_name = new_name and new_name:gsub("^%s+", "") or ""
-                current_commit.path = #current_commit.new_name > 0 and current_commit.new_name or current_commit.old_name
+                current_commit.path = #current_commit.new_name > 0 and current_commit.new_name or current_commit
+                .old_name
             end
         elseif line == "" and next(current_commit) then
             table.insert(commits, current_commit)
