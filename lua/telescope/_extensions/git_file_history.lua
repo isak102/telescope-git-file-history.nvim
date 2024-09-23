@@ -19,6 +19,7 @@ local conf = require("telescope.config").values
 local finders = require("telescope.finders")
 local pickers = require("telescope.pickers")
 local previewers = require("telescope.previewers")
+local entry_display = require("telescope.pickers.entry_display")
 local gfh_actions = require("telescope._extensions.git_file_history.actions")
 local gfh_config = require("telescope._extensions.git_file_history.config")
 
@@ -90,14 +91,25 @@ local function git_file_history(opts)
             results_title = "Commits for current file",
             finder = finders.new_table({
                 results = git_log(),
-                entry_maker = function(entry)
+                 entry_maker = function(entry)
+                    local displayer = entry_display.create({
+                        separator = " ",
+                        items = {
+                            { width = 10 },
+                            { width = 7 },
+                            { remaining = true },
+                        },
+                    })
+
                     return {
                         value = entry.hash,
-                        display = entry.date
-                            .. " ["
-                            .. entry.hash:sub(1, 7)
-                            .. "] "
-                            .. entry.message,
+                        display = function()
+                            return displayer({
+                                { entry.date, "TelescopeResultsConstant" },
+                                { string.sub(entry.hash, 1, 7), "TelescopeResultsIdentifier" },
+                                entry.message,
+                            })
+                        end,
                         ordinal = entry.hash .. entry.date .. entry.message,
                         path = entry.path,
                     }
