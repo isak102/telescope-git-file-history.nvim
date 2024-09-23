@@ -29,27 +29,50 @@ end
 
 local function git_log()
     local file_path = vim.fn.expand("%")
-    local cmd = 'git --no-pager log --follow --name-status --pretty=format:"%H%x09%ad%x09%s" --date=short "' .. file_path .. '"'
+    local cmd = 'git --no-pager log --follow --name-status --pretty=format:"hash: %H%ndate: %ad%nmessage: %s%n" --date=short "' .. file_path .. '"'
     local content = vim.fn.system(cmd)
 
     local commits = {}
+    local current_commit = {}
 
-    local pattern = "([a-fA-F0-9]+)%s+(%d%d%d%d%-%d%d%-%d%d)%s+(.-)%c+%S+%s+([^\r\n]+)"
+    for line in content:gmatch("[^\n]+") do
+        if line:match("^hash:") then
+            if next(current_commit) then
+                table.insert(commits, current_commit)
+            end
+            current_commit = { hash = line:match("^hash: (.+)$") }
+        elseif line:match("^date:") then
+            current_commit.date = line:match("^date: (.+)$")
+        elseif line:match("^message:") then
+            current_commit.message = line:match("^message: (.+)$")
+        elseif line:match("^%S") then
+            local type, remainder = line:match("^(%S+)%s+(.+)$")
+            current_commit.type = type
+            if remainder then
+                local old_name, new_name = remainder:match("^(.-)\t(.*)$")
+                if not old_name or old_name == "" then
+                    old_name = remainder
+                    new_name = ""
+                end
+                current_commit.old_name = old_name and old_name:gsub("%s+$", "") or ""
+                current_commit.new_name = new_name and new_name:gsub("^%s+", "") or ""
+                current_commit.path = #current_commit.new_name > 0 and current_commit.new_name or current_commit.old_name
+            end
+        elseif line == "" and next(current_commit) then
+            table.insert(commits, current_commit)
+            current_commit = {}
+        end
+    end
 
-    for hash, date, message, path in string.gmatch(content, pattern) do
-        table.insert(commits, {
-            hash = hash,
-            date = date,
-            message = message,
-            path = path
-        })
+    if next(current_commit) then
+        table.insert(commits, current_commit)
     end
 
     return commits
 end
 
 local function git_show(entry)
-    return vim.fn.system("git --no-pager show " .. entry.value .. ":" .. entry.path)
+    return vim.fn.system("git --no-pager show " .. entry.value .. ":" .. '"' .. entry.path .. '"')
 end
 
 local function git_file_history(opts)
@@ -113,7 +136,7 @@ local function git_file_history(opts)
                     return entry.value .. ":" .. entry.path
                 end,
                 define_preview = function(self, entry, _)
-                    if self.state.bufname == entry.value .. ":" .. entry.path then
+                    if self.state.bufname == entry.value .. ":" .. '"' .. entry.path .. '"' then
                         return
                     end
 
