@@ -29,9 +29,9 @@ end
 
 local function git_log()
     local file_path = vim.fn.expand("%")
-    local cmd =
-    'git --no-pager log --follow --name-status --pretty=format:"hash: %H%ndate: %ad%nmessage: %s%n" --date=short "' ..
-    file_path .. '"'
+    local cmd = 'git --no-pager log --follow --name-status --pretty=format:"hash: %H%ndate: %ad%nmessage: %s%n" --date=short "'
+        .. file_path
+        .. '"'
     local content = vim.fn.system(cmd)
 
     local commits = {}
@@ -58,8 +58,8 @@ local function git_log()
                 end
                 current_commit.old_name = old_name and old_name:gsub("%s+$", "") or ""
                 current_commit.new_name = new_name and new_name:gsub("^%s+", "") or ""
-                current_commit.path = #current_commit.new_name > 0 and current_commit.new_name or current_commit
-                .old_name
+                current_commit.path = #current_commit.new_name > 0 and current_commit.new_name
+                    or current_commit.old_name
             end
         elseif line == "" and next(current_commit) then
             table.insert(commits, current_commit)
@@ -93,9 +93,13 @@ local function git_file_history(opts)
                 entry_maker = function(entry)
                     return {
                         value = entry.hash,
-                        display = entry.date .. " [" .. entry.hash:sub(1, 7) .. "] " .. entry.message,
+                        display = entry.date
+                            .. " ["
+                            .. entry.hash:sub(1, 7)
+                            .. "] "
+                            .. entry.message,
                         ordinal = entry.hash .. entry.date .. entry.message,
-                        path = entry.path
+                        path = entry.path,
                     }
                 end,
             }),
@@ -144,7 +148,13 @@ local function git_file_history(opts)
                     end
 
                     local content = git_show(entry)
-                    vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, vim.split(content, "\n"))
+                    vim.api.nvim_buf_set_lines(
+                        self.state.bufnr,
+                        0,
+                        -1,
+                        false,
+                        vim.split(content, "\n")
+                    )
 
                     local ft = pfiletype.detect(entry.path, {})
                     require("telescope.previewers.utils").highlighter(self.state.bufnr, ft)
