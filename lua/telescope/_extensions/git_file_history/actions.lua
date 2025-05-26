@@ -7,15 +7,34 @@ local function is_https_url(url)
 end
 
 local function get_repo_url()
-    local repo_url = vim.fn.system("git remote get-url $(git remote)")
+    -- Get current branch name
+    local branch = vim.fn.system("git symbolic-ref --short HEAD"):gsub("%s+", "")
+    if branch == "" then
+        vim.notify("Could not determine current branch", vim.log.levels.ERROR)
+        return nil
+    end
 
+    -- Get the remote tracking name of the branch
+    local remote = vim.fn.system("git config --get branch." .. branch .. ".remote"):gsub("%s+", "")
+    if remote == "" then
+        vim.notify("No remote tracking branch found for '" .. branch .. "'", vim.log.levels.ERROR)
+        return nil
+    end
+
+    -- Get the remote URL
+    local repo_url = vim.fn.system("git remote get-url " .. remote):gsub("%s+", "")
+    if repo_url == "" then
+        vim.notify("Failed to get URL for remote '" .. remote .. "'", vim.log.levels.ERROR)
+        return nil
+    end
+
+    -- Change SSH to HTTPS if needed
     if not is_https_url(repo_url) then
         repo_url = repo_url:gsub(":", "/")
         repo_url = repo_url:gsub("git@", "https://")
     end
-    repo_url = repo_url:gsub("%.git", "")
+    repo_url = repo_url:gsub("%.git$", "")
     repo_url = repo_url:gsub("[^/]+@dev", "dev")
-    repo_url = repo_url:gsub("\n", "")
 
     return repo_url
 end
