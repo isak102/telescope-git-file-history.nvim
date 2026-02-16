@@ -110,7 +110,7 @@ local function git_file_history(opts)
                                 entry.message,
                             })
                         end,
-                        ordinal = entry.hash .. entry.date .. entry.message,
+                        ordinal = entry.hash .. entry.date .. (entry.message or ""),
                         path = entry.path,
                     }
                 end,
