@@ -74,13 +74,22 @@ gfh_actions.open_in_browser = function()
             open_cmd = "start"
         elseif vim.fn.executable("wslview") == 1 then
             open_cmd = "wslview"
+        elseif vim.fn.executable("cmd") == 1 then
+            open_cmd = { "cmd", "/c", "start", '""' }
         else
             error("No command available to open URL [xdg-open, open, start or wslview]")
             return
         end
     end
 
-    local output = vim.fn.jobstart({ open_cmd, full_url }, { detach = true })
+    local run
+    if type(open_cmd) == "table" then
+        run = vim.list_extend(open_cmd, { full_url })
+    else
+        run = { open_cmd, full_url }
+    end
+
+    local output = vim.fn.jobstart(run, { detach = true })
     if output <= 0 then
         error(string.format("Failed to open URL: %s with command: %s", full_url, open_cmd))
     end
